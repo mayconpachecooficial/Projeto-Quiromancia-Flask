@@ -1,162 +1,222 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cadastro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merienda+One&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #0a192f;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        
+      body {
+        font-family: "Merienda One", cursive;
+        background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background-color: rgba(255, 255, 255, 0.85);
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        padding: 200px;
+        height: 600px;
+        width: 50%;
+        text-align: center;
+        animation-duration: 0.5s;
+      }
+
+      input,
+      .btn {
+        font-family: "Arial", sans-serif;
+        border: 2px solid #007bff;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 0;
+        width: calc(100% - 20px);
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+      }
+
+      input:focus,
+      .btn:focus {
+        outline: none;
+        border-color: #0056b3;
+        background-color: #f8f8f2;
+      }
+
+      .btn {
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background-color: #0056b3;
+      }
+
+      h1,
+      label,
+      p,
+      a {
+        color: #0a192f;
+        transition: color 0.3s ease;
+      }
+
+      a:hover {
+        color: #007bff;
+      }
+
+      @media (max-width: 768px) {
         .container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 300px;
-            text-align: center;
-            animation-duration: 0.5s; /* ajusta a duração da animação */
+          width: 90%;
+          padding: 20px;
         }
-        
-        .btn {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        
-        .loader {
-            border: 16px solid #f3f3f3; /* Cinza claro */
-            border-top: 16px solid #3498db; /* Azul */
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 2s linear infinite;
-            margin: 0 auto;
-            display: none; /* Começa escondido */
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .error-message {
-            background-color: rgba(255, 0, 0, 0.8);
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            display: none;
-            margin-top: 10px;
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container animate__animated animate__fadeInDown">
-        <h1 class="animate__animated animate__bounce">Cadastro</h1>
-        <form id="cadastroForm" action="/cadastro" method="post" class="animate__animated animate__fadeInUp">
-            <label for="name">Nome:</label><br>
-            <input type="text" id="name" name="name" required><br>
-            <label for="email">E-mail:</label><br>
-            <input type="email" id="email" name="email" required><br>
-            <label for="phone">Celular:</label><br>
-            <input type="tel" id="phone" name="phone" placeholder="(00) 00000-0000" oninput="formatPhoneNumber(this)" required><br><br>
-            <label for="password">Criar Senha:</label><br>
-            <input type="password" id="password" name="password" required><br>
-            <label for="confirm_password">Confirmar Senha:</label><br>
-            <input type="password" id="confirm_password" name="confirm_password" oninput="checkPasswordMatch();" required><br>
-            <p id="password_match_message" style="display: none; color: red;">As senhas não correspondem.</p><br>
-            <input class="btn animate__animated animate__fadeIn" type="submit" value="Cadastrar">
-            <div id="loader" class="loader"></div>
-        </form>
-        <p id="mensagemSucesso" class="animate__animated animate__fadeInUp" style="display: none; color: green;">Cadastro efetuado com sucesso!</p>
-        <p class="animate__animated animate__fadeInUp">Já tem uma conta? <a href="/login">Faça login aqui</a>.</p>
-        <p class="animate__animated animate__fadeInUp"><a href="/home">Voltar ao Início!</a>.</p>
+      <h1>Cadastro</h1>
+      <form id="cadastroForm" action="/cadastro" method="post">
+        <label for="name">Nome:</label><br />
+        <input type="text" id="name" name="name" required /><br />
+        <label for="email">E-mail:</label><br />
+        <input type="email" id="email" name="email" required /><br />
+        <label for="phone">Celular:</label><br />
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          placeholder="(00) 00000-0000"
+          oninput="formatPhoneNumber(this)"
+          required
+        /><br /><br />
+        <label for="password">Criar Senha:</label><br />
+        <input type="password" id="password" name="password" required /><br />
+        <label for="confirm_password">Confirmar Senha:</label><br />
+        <input
+          type="password"
+          id="confirm_password"
+          name="confirm_password"
+          oninput="checkPasswordMatch();"
+          required
+        /><br />
+        <p id="password_match_message" style="display: none; color: red">
+          As senhas não correspondem.
+        </p>
+        <br />
+        <input
+          class="btn animate__animated animate__fadeIn"
+          type="submit"
+          value="Cadastrar"
+        />
+        <div id="loader" class="loader"></div>
+      </form>
+      <p
+        id="mensagemSucesso"
+        class="animate__animated animate__fadeInUp"
+        style="display: none; color: green"
+      >
+        Cadastro efetuado com sucesso!
+      </p>
+      <p class="animate__animated animate__fadeInUp">
+        Já tem uma conta? <a href="/login">Faça login aqui</a>.
+      </p>
+      <p class="animate__animated animate__fadeInUp">
+        <a href="/home">Voltar ao Início!</a>.
+      </p>
     </div>
 
     <div id="error-message" class="error-message"></div>
-
     <script>
-        function checkPasswordMatch() {
-            var password = document.getElementById("password").value;
-            var confirm_password = document.getElementById("confirm_password").value;
-            var password_match_message = document.getElementById("password_match_message");
+      function checkPasswordMatch() {
+        var password = document.getElementById("password").value;
+        var confirm_password =
+          document.getElementById("confirm_password").value;
+        var password_match_message = document.getElementById(
+          "password_match_message"
+        );
 
-            if (password != confirm_password) {
-                password_match_message.style.display = "block";
-            } else {
-                password_match_message.style.display = "none";
-            }
+        if (password != confirm_password) {
+          password_match_message.style.display = "block";
+        } else {
+          password_match_message.style.display = "none";
         }
+      }
 
-        function formatPhoneNumber(input) {
-            var phone = input.value.replace(/\D/g, ''); // Remove caracteres não numéricos
-            if (phone.length > 0) {
-                if (phone.length <= 2) {
-                    input.value = '(' + phone;
-                } else if (phone.length <= 7) {
-                    input.value = '(' + phone.slice(0, 2) + ') ' + phone.slice(2);
-                } else {
-                    input.value = '(' + phone.slice(0, 2) + ') ' + phone.slice(2, 7) + '-' + phone.slice(7, 11);
-                }
-            }
+      function formatPhoneNumber(input) {
+        var phone = input.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+        if (phone.length > 0) {
+          if (phone.length <= 2) {
+            input.value = "(" + phone;
+          } else if (phone.length <= 7) {
+            input.value = "(" + phone.slice(0, 2) + ") " + phone.slice(2);
+          } else {
+            input.value =
+              "(" +
+              phone.slice(0, 2) +
+              ") " +
+              phone.slice(2, 7) +
+              "-" +
+              phone.slice(7, 11);
+          }
         }
+      }
 
-        document.getElementById('cadastroForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            var loader = document.getElementById('loader');
-            var email = document.getElementById('email').value;
-            var errorMessageDiv = document.getElementById('error-message');
-            errorMessageDiv.style.display = 'none'; // Limpa a mensagem de erro anterior
+      document
+        .getElementById("cadastroForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          var loader = document.getElementById("loader");
+          var email = document.getElementById("email").value;
+          var errorMessageDiv = document.getElementById("error-message");
+          errorMessageDiv.style.display = "none"; // Limpa a mensagem de erro anterior
 
-            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex simples para validação de e-mail
-            if (!emailPattern.test(email)) {
-                errorMessageDiv.textContent = 'Por favor, insira um e-mail válido.';
-                errorMessageDiv.style.display = 'block';
-                return;
-            }
+          var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex simples para validação de e-mail
+          if (!emailPattern.test(email)) {
+            errorMessageDiv.textContent = "Por favor, insira um e-mail válido.";
+            errorMessageDiv.style.display = "block";
+            return;
+          }
 
-            loader.style.display = 'block'; // Mostra o loader
+          loader.style.display = "block"; // Mostra o loader
 
-            // Verificar se o e-mail já está cadastrado
-            fetch('/verificar_email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email: email }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                loader.style.display = 'none'; // Esconde o loader
-                if (data.exists) {
-                    errorMessageDiv.textContent = 'Este e-mail já está cadastrado. Por favor, use outro e-mail.';
-                    errorMessageDiv.style.display = 'block';
-                } else {
-                    // E-mail disponível, prossegue com o envio do formulário
-                    document.getElementById('cadastroForm').submit();
-                }
+          // Verificar se o e-mail já está cadastrado
+          fetch("/verificar_email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: email }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              loader.style.display = "none"; // Esconde o loader
+              if (data.exists) {
+                errorMessageDiv.textContent =
+                  "Este e-mail já está cadastrado. Por favor, use outro e-mail.";
+                errorMessageDiv.style.display = "block";
+              } else {
+                // E-mail disponível, prossegue com o envio do formulário
+                document.getElementById("cadastroForm").submit();
+              }
             })
             .catch((error) => {
-                loader.style.display = 'none'; // Esconde o loader
-                console.error('Erro ao verificar o e-mail:', error);
+              loader.style.display = "none"; // Esconde o loader
+              console.error("Erro ao verificar o e-mail:", error);
             });
         });
+
+      document.head.appendChild(styleSheet);
     </script>
-</body>
+  </body>
 </html>

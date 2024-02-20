@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Faça Login Aqui!</title>
+    <title>Recuperação de Senha</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
@@ -80,25 +80,23 @@
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
 
-      .signup-link,
-      .voltar-link,
-      signup-link-1 {
+      .voltar-link {
         text-decoration: none;
         color: #1dd1a1;
         transition: color 0.3s ease;
       }
 
-      .signup-link:hover,
+      .enviar-link:hover,
       .voltar-link:hover {
         color: #ffffff; /* Cor branca no hover para destacar */
       }
 
-      .signup-link-1 {
-        color: #1dd1a1;
+      .enviar-link {
+        color: #0056b3;
       }
 
-      .signup-link-1: hover {
-        color: #ffffff;
+      .enviar-link:hover {
+        background-color: #0056b3;
       }
 
       .voltar-link {
@@ -125,25 +123,17 @@
     </style>
   </head>
   <body>
-    <div class="container animate__animated animate__fadeIn">
-      <h1 class="animate__animated animate__bounce">Login</h1>
-      <form action="/login" method="post">
-        <label for="email">Email:</label><br />
-        <input type="text" id="email" name="email" required /><br />
-        <label for="password">Senha:</label><br />
-        <input type="password" id="password" name="password" required /><br />
-        <input type="submit" class="btn" value="Entrar" />
-        <a href="/esqueci-minha-senha" class="signup-link-1"
-          >Esqueci Minha Senha</a
-        >
+    <div class="container">
+      <h1>Recuperação de Senha</h1>
+      <p>
+        Insira seu e-mail para receber as instruções de recuperação de senha.
+      </p>
+      <form action="/esqueci-minha-senha" method="post">
+        <label for="email">E-mail:</label><br />
+        <input type="email" id="email" name="email" required /><br />
+        <input type="submit" class="enviar-link" value="Enviar" />
       </form>
-      <p class="animate__animated animate__fadeInUp">
-        Ainda não tem uma conta?
-        <a href="/cadastro" class="signup-link">Cadastre-se!</a>
-      </p>
-      <p class="animate__animated animate__fadeInUp">
-        <a href="/home" class="voltar-link">Voltar ao Início</a>
-      </p>
+      <a href="/login" class="voltar-link"> Voltar para o Login</a>
     </div>
     <script></script>
   </body>

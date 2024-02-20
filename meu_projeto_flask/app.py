@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from itsdangerous import URLSafeTimedSerializer, BadSignature
 from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
 from reportlab.lib.pagesizes import letter
@@ -11,17 +12,20 @@ import sqlite3
 import hashlib
 
 app = Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY', 'fallback_secret_key')
 
 # Lista de análises de quiromancia pré-definidas
 QUIROMANCY_ANALYSES = [
-    "Análise 1: Você tem uma grande linha da vida, indicando vitalidade.",
-    "Análise 2: Sua linha do coração sugere uma pessoa apaixonada.",
-    "Análise 3: A linha da cabeça revela uma mente analítica.",
+    "Análise 1: A sua linha da vida representa a sua saúde, vitalidade, as mudanças no destino e no curso da vida, força vital, vontade de viver.",
+    "Análise 2: A sua linha da cabeça representa a sua forma de pensar, como você lida com as situações, inteligência e a saúde mental, trabalho, tendências e qualificações.",
+    "Análise 3: A sua linha do coração fala sobre os seus sentimentos, questões traumáticas, relacionamentos, a maneira de lidar com os teus sentimentos e também sobre a sua carreira.",
+    "Análise 4: A sua linha do destino fala sobre carreira , resultados financeiros e também sobre a sua saúde. Sempre vai em direção ao dedo de Saturno",
+    "Análise 5: A sua linha mercuriana fala sobre saúde, conexão espiritual, intêligencia e sempre vai em direção ao monte de Mercúrio.",
     # Adicione mais análises conforme necessário
 ]
 
+
 # Configuração do app Flask
-app.secret_key = os.environ.get('SECRET_KEY', 'fallback_secret_key')
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -34,10 +38,14 @@ app.config.update(
     MAIL_PASSWORD=os.environ.get('MAIL_PASSWORD', 'Mp06vA29')
 )
 
+
+
 mail = Mail(app)
+serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -137,7 +145,6 @@ def upload_file():
         if file.filename == '' or not allowed_file(file.filename):
             return redirect(request.url)
 
-        # Gera o PDF diretamente da imagem enviada
         analysis_result = choice(QUIROMANCY_ANALYSES)
         pdf_path = generate_pdf(analysis_result, file)
         send_email(pdf_path, session.get('email'))
@@ -156,6 +163,60 @@ def verificar_email():
     conn.close()
     return jsonify({'exists': exists})
 
+@app.route('/esqueci-minha-senha', methods=['GET', 'POST'])
+def esqueci_minha_senha():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        # Verifique se o e-mail existe no banco de dados
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+        user = cursor.fetchone()
+        conn.close()
+        if user:
+            token = serializer.dumps(email, salt='email-reset')
+            reset_url = url_for('redefinir_senha', token=token, _external=True)
+            send_reset_email(email, reset_url)
+            flash('Um email com instruções para redefinir sua senha foi enviado para você.')
+            return redirect(url_for('login'))
+        else:
+            flash('E-mail não encontrado. Por favor, tente novamente.')
+    return render_template('esqueci_minha_senha.html')
+
+@app.route('/redefinir-senha', methods=['GET', 'POST'])
+def redefinir_senha():
+    token = request.args.get('token', None)
+    if request.method == 'POST' and token:
+        try:
+            email = serializer.loads(token, salt='email-reset', max_age=3600)
+        except (SignatureExpired, BadSignature):
+            flash('The password reset link is expired or invalid.')
+            return redirect(url_for('esqueci_minha_senha'))
+        
+        nova_senha = request.form.get('nova_senha')  # A variável deve ser definida aqui
+        confirmar_senha = request.form.get('confirm_password')
+        
+        if nova_senha != confirmar_senha:
+            flash('Passwords do not match.')
+            return redirect(url_for('redefinir_senha', token=token))
+        
+        # Aqui, a variável 'nova_senha' será usada para atualizar a senha no banco de dados
+        # Se 'nova_senha' não for definida, você terá um UnboundLocalError
+        update_password(email, nova_senha)
+        flash('Your password has been updated.')
+        return redirect(url_for('login'))
+    elif token:
+        # Se o método não for POST, 'nova_senha' não será definida, então você não deve tentar usá-la aqui
+        try:
+            email = serializer.loads(token, salt='email-reset', max_age=3600)
+        except (SignatureExpired, BadSignature):
+            flash('The password reset link is expired or invalid.')
+            return redirect(url_for('esqueci_minha_senha'))
+        return render_template('redefinir_senha.html', token=token)
+    else:
+        flash('No reset token provided.')
+        return redirect(url_for('home'))
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -163,14 +224,12 @@ def generate_pdf(content, file):
     pdf_filename = os.path.splitext(file.filename)[0] + '.pdf'
     pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], pdf_filename)
 
-    # Cria um objeto PDF com múltiplas páginas
     doc = SimpleDocTemplate(pdf_path, pagesize=letter)
     story = []
 
     styles = getSampleStyleSheet()
     normal_style = styles['Normal']
 
-    # Converte a imagem enviada para um objeto que o ReportLab pode usar
     image = Image(BytesIO(file.read()), width=400, height=200)
     story.append(image)
 
@@ -182,9 +241,7 @@ def generate_pdf(content, file):
 
     doc.build(story)
 
-    # Retorna o caminho para o PDF gerado
     return pdf_path
-
 
 def send_email(pdf_path, recipient):
     if recipient:
@@ -193,6 +250,15 @@ def send_email(pdf_path, recipient):
         with app.open_resource(pdf_path) as fp:
             msg.attach(pdf_path, 'application/pdf', fp.read())
         mail.send(msg)
+
+def send_reset_email(email, reset_url):
+    msg = Message('Redefinir Senha', 
+                  sender=app.config['MAIL_USERNAME'], 
+                  recipients=[email])
+    msg.body = f'Para redefinir sua senha, clique no link a seguir: {reset_url}'
+    mail.send(msg)
+
+
 
 if __name__ == '__main__':
     create_users_table()

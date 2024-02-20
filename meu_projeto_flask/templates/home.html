@@ -1,109 +1,186 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Descubra seu destino através das linhas das mãos com nossa leitura de mãos e astrologia.">
-    <title>Leitura de Mãos - Astrologia</title>
-    <link rel="icon" href="path_to_your_favicon.ico"> <!-- Adicione o caminho correto para seu favicon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Descubra seu destino através das linhas das mãos com nossa leitura de mãos e astrologia."
+    />
+    <title>Leitura de Mãos - Quiromancia</title>
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='path_to_your_favicon.ico') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <!-- Adicionando Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merienda+One&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            font-family: 'Arial', sans-serif;
-            background-color: #000033; /* Cor de fundo mais escura */
-            color: #fff;
-            overflow: hidden; /* Evita que as estrelas apareçam fora da tela */
-            position: relative;
+      /* Estilos existentes permanecem ... */
+
+      /* Alterações nos estilos */
+      body,
+      html {
+        font-family: "Merienda One", cursive; /* Fonte com estilo mais temático */
+        background: linear-gradient(
+          135deg,
+          #3a1c71,
+          #d76d77,
+          #ffaf7b
+        ); /* Gradiente escuro e místico */
+        color: #fff;
+        overflow-x: hidden; /* Garante que o overflow horizontal esteja oculto */
+        position: relative;
+      }
+
+      header h1 {
+        font-size: 48px;
+        color: #f8f8f2;
+        margin-bottom: 0; /* Remove
+            a margem inferior para um cabeçalho mais compacto /
+            animation: pulse 2s infinite; / Adiciona animação de pulsação */
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
         }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .container {
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.7
+        ); /* Fundo semitransparente para melhor leitura */
+        padding: 40px;
+        border-radius: 15px; /* Bordas arredondadas */
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* Sombra para efeito 3D */
+      }
+
+      h2 {
+        color: #ffd700; /* Dourado para um destaque místico */
+        margin: 20px 0; /* Espaçamento superior e inferior */
+      }
+
+      .cta-button {
+        font-size: 20px;
+        padding: 15px 30px; /* Mais preenchimento para botões maiores */
+        margin: 25px 10px; /* Espaçamento entre botões */
+        color: yellow;
+      }
+
+      /* Efeitos de hover para botões com transições suaves */
+      .cta-button:hover {
+        transform: translateY(-3px); /* Eleva o botão */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Sombra maior para efeito de elevação */
+      }
+
+      /* Responsividade para telas menores */
+      @media (max-width: 768px) {
         header h1 {
-            background-color: #000033; /* Cor de fundo mais escura */
-            color: #fff;
-            overflow: hidden; /* Evita que as estrelas apareçam fora da tela */
-            position: relative;
-            position: relative;
-            overflow: hidden; /* Evita que as estrelas apareçam fora da tela */
-            padding: 40px 0;
-            text-align: center;
-            font-size: 36px;
-            animation: blink 2s infinite alternate; /* Adiciona animação de piscar */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 255, 255, 0.2); /* Sombra no texto */
+          font-size: 30px; /* Tamanho de fonte menor para o cabeçalho em telas menores */
         }
-        @keyframes blink {
-            from {opacity: 1;}
-            to {opacity: 0.5;}
-        }
+
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
+          padding: 20px;
         }
-        p {
-            line-height: 1.6;
-            font-size: 18px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra no texto */
-        }
+
         .cta-button {
-            display: inline-block;
-            background-color: #ff7e5f;
-            color: #fff;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            margin-top: 20px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra no texto do botão */
+          font-size: 18px;
+          padding: 10px 20px;
         }
-        .cta-button:hover {
-            background-color: #ff4e2f;
+
+        .cta-button: hover {
+          color: #ffffff; /* Cor branca no hover para destacar */
         }
-        /* Animação das estrelas */
-        .star {
-            position: absolute;
-            background-color: #fff;
-            width: 2px;
-            height: 2px;
-            border-radius: 50%;
-            animation: twinkle 3s infinite;
-            z-index: -1; /* Coloca as estrelas atrás do conteúdo */
+      }
+
+      /* Estilos adicionais para as estrelas */
+      .star {
+        /* estilos existentes permanecem ... */
+        animation-duration: 5s; /* Torna a animação das estrelas mais lenta */
+        animation-delay: calc(
+          3s * var(--star-animation-delay, 1)
+        ); /* Delay variável para mais naturalidade */
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 class="animate__animated animate__fadeInDown">
+        Leitura de Mãos - Quiromancia
+      </h1>
+    </header>
+    <div class="container animate__animated animate__fadeInUp">
+      <h2>Desvende os Segredos de Suas Linhas</h2>
+      <p>
+        Cada linha em sua mão é um mapa do seu destino. Nossos especialistas em
+        quiromancia irão guiá-lo à compreensão profunda de sua vida, amor, e
+        verdadeiro propósito.
+      </p>
+      <a
+        href="/login"
+        class="cta-button animate__animated animate__pulse animate__infinite"
+        >Iniciar Sessão</a
+      >
+      <a
+        href="/cadastro"
+        class="cta-button animate__animated animate__pulse animate__infinite"
+        >Registrar-se</a
+      >
+    </div>
+    <script>
+      // Adiciona estrelas aleatórias ao corpo da página
+      for (let i = 0; i < 100; i++) {
+        createStar();
+      }
+      // Função para criar uma estrela em uma posição aleatória
+      function createFallingStar() {
+        const star = document.createElement("div");
+        star.style.position = "absolute";
+        star.style.width = "2px";
+        star.style.height = "2px";
+        star.style.backgroundColor = "white";
+        star.style.borderRadius = "50%";
+        star.style.top = `${Math.random() * window.innerHeight}px`;
+        star.style.left = `${Math.random() * window.innerWidth}px`;
+        star.style.animation = "fall 2s linear forwards, twinkle 1.5s infinite";
+
+        document.body.appendChild(star);
+
+        setTimeout(() => {
+          document.body.removeChild(star);
+        }, 2000);
+      }
+
+      setInterval(createFallingStar, 300);
+
+      // Adicionando keyframes para as animações de queda e piscar das estrelas.
+      const styleSheet = document.createElement("style");
+      styleSheet.type = "text/css";
+      styleSheet.innerText = `
+        @keyframes fall {
+            to { transform: translateY(${window.innerHeight}px); }
         }
         @keyframes twinkle {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Leitura de Mãos - Astrologia</h1>
-    </header>
-    <div class="container">
-        <h2>Descubra seu destino através das linhas das mãos!</h2>
-        <p>Explore os segredos ocultos em suas mãos e desvende os mistérios do universo.</p>
-        <a href="/login" class="cta-button">Já tenho login!</a>
-        <a href="/cadastro" class="cta-button">Vou me cadastrar!</a>
-    </div>
-    <!-- Estrelas flutuantes -->
-    <script>
-        // Adiciona estrelas aleatórias ao corpo da página
-        for (let i = 0; i < 200; i++) { // Adicionei mais estrelas aqui (200)
-            createStar();
-        }
-        
-
-        // Função para criar uma estrela em uma posição aleatória
-        function createStar() {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = `${Math.random() * 100}%`;
-            star.style.top = `${Math.random() * 100}%`;
-            document.body.appendChild(star);
-        }
+    `;
+      document.head.appendChild(styleSheet);
     </script>
-</body>
+  </body>
 </html>
