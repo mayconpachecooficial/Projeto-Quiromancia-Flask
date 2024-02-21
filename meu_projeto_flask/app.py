@@ -44,8 +44,8 @@ app.config.update(
     MAIL_SERVER='smtp-mail.outlook.com',
     MAIL_PORT=587,
     MAIL_USE_TLS=True,
-    MAIL_USERNAME=os.environ.get('MAIL_USERNAME', 'mayconmspalco@hotmail.com'),
-    MAIL_PASSWORD=os.environ.get('MAIL_PASSWORD', 'Mp06vA29')
+    MAIL_USERNAME=os.environ.get('MAIL_USERNAME', ''),
+    MAIL_PASSWORD=os.environ.get('MAIL_PASSWORD', '')
 )
 
 
