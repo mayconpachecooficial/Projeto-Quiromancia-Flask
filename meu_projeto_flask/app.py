@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
-from itsdangerous import URLSafeTimedSerializer, BadSignature
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT
 from random import choice
 from io import BytesIO
+from flask import current_app as app
 import os
 import sqlite3
 import hashlib
@@ -14,15 +16,23 @@ import hashlib
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'fallback_secret_key')
 
-# Lista de análises de quiromancia pré-definidas
-QUIROMANCY_ANALYSES = [
-    "Análise 1: A sua linha da vida representa a sua saúde, vitalidade, as mudanças no destino e no curso da vida, força vital, vontade de viver.",
-    "Análise 2: A sua linha da cabeça representa a sua forma de pensar, como você lida com as situações, inteligência e a saúde mental, trabalho, tendências e qualificações.",
-    "Análise 3: A sua linha do coração fala sobre os seus sentimentos, questões traumáticas, relacionamentos, a maneira de lidar com os teus sentimentos e também sobre a sua carreira.",
-    "Análise 4: A sua linha do destino fala sobre carreira , resultados financeiros e também sobre a sua saúde. Sempre vai em direção ao dedo de Saturno",
-    "Análise 5: A sua linha mercuriana fala sobre saúde, conexão espiritual, intêligencia e sempre vai em direção ao monte de Mercúrio.",
-    # Adicione mais análises conforme necessário
-]
+# Lista de análises de quiromancia pré-definidas"
+QUIROMANCY_ANALYSES = ["""
+\t \n<b>Linha da Vida:</b> Curta e começa no Monte de Vênus, sugerindo entusiasmo pela vida, mas uma tendência a esgotar energia rapidamente.
+\t \n<b>Linha da Cabeça:</b> Retilínea e distinta, indicando uma abordagem prática e estruturada do pensamento.
+\t \n<b>Linha do Coração:</b> Começa sob o dedo de Saturno, o que pode indicar uma abordagem cuidadosa e, às vezes, cautelosa em relação às emoções e relacionamentos.
+\t \n<b>Monte da Lua:</b> A presença do monte implica uma forte intuição e uma inclinação para a criatividade.
+\t \n<b>Monte de Vênus:</b> Está relacionado à expressão e afetos emocionais, e sua proeminência pode indicar uma personalidade amorosa e apaixonada.
+\t \n<b>Dedo de Júpiter:</b> Representa liderança e ambição. Uma pessoa com um dedo de Júpiter proeminente pode ser vista como autoritária e com desejo de controle.
+\t \n<b>Dedo de Saturno:</b> Associado à responsabilidade e ao amor pela estrutura. Um dedo de Saturno longo pode indicar uma pessoa com uma abordagem séria da vida.
+\t \n<b>Dedo do Sol:</b> Relacionado a criatividade, fama e sucesso. Um dedo do Sol bem formado sugere uma inclinação para as artes ou para ser o centro das atenções.
+\t \n<b>Dedo de Mercúrio:</b> Ligado à comunicação e ao comércio. Um dedo de Mercúrio proeminente indica habilidades comunicativas e, muitas vezes, uma natureza comercial ou persuasiva.
+\t \n<b>Linha do Sol (também conhecida como Linha do Apolo):</b> Não representada neste diagrama, mas se presente, é uma indicação de sucesso e reconhecimento.
+\t \n<b>Linha do Casamento:</b> Também não mostrada aqui, mas quando aparece, revela informações sobre as relações íntimas e casamentos significativos.
+\t \n<b>Linha da Saúde:</b> Ausente neste esquema, mas se visível, pode indicar questões de saúde ou vitalidade.
+\t \n<b>Linha da Riqueza:</b> Não está presente no diagrama. Se estivesse, poderia dar pistas sobre a prosperidade material da pessoa.
+\t \n<b>Linha do Destino:</b> Não especificada aqui, mas normalmente corre do pulso até o dedo de Saturno, indicando o grau em que a vida da pessoa é afetada por fatores externos versus auto-determinação.
+"""]
 
 
 # Configuração do app Flask
@@ -51,6 +61,15 @@ def get_db_connection():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     return conn
+
+def update_password(email, new_password):
+    hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('UPDATE users SET password = ? WHERE email = ?', (hashed_password, email))
+    conn.commit()
+    conn.close()
+
 
 def create_users_table():
     conn = get_db_connection()
@@ -147,7 +166,10 @@ def upload_file():
 
         analysis_result = choice(QUIROMANCY_ANALYSES)
         pdf_path = generate_pdf(analysis_result, file)
-        send_email(pdf_path, session.get('email'))
+        recipient_email = session.get('email')
+        additional_pdf_path = 'adicional/quiromancia.pdf'  # Coloque o caminho real do arquivo adicional aqui
+
+        send_email(pdf_path, recipient_email, additional_pdf_path)
 
         return 'Arquivo enviado e análise realizada. Verifique seu e-mail.'
     return render_template('upload.html')
@@ -189,33 +211,32 @@ def redefinir_senha():
     if request.method == 'POST' and token:
         try:
             email = serializer.loads(token, salt='email-reset', max_age=3600)
-        except (SignatureExpired, BadSignature):
-            flash('The password reset link is expired or invalid.')
+        except SignatureExpired:
+            flash('O link para redefinição de senha expirou.')
+            return redirect(url_for('esqueci_minha_senha'))
+        except BadSignature:
+            flash('O link para redefinição de senha é inválido.')
             return redirect(url_for('esqueci_minha_senha'))
         
-        nova_senha = request.form.get('nova_senha')  # A variável deve ser definida aqui
+        nova_senha = request.form.get('nova_senha')
         confirmar_senha = request.form.get('confirm_password')
+        app.logger.info('Passwords retrieved from form')  # Log de depuração
         
         if nova_senha != confirmar_senha:
             flash('Passwords do not match.')
+            app.logger.warning('Passwords do not match')  # Log de aviso
             return redirect(url_for('redefinir_senha', token=token))
         
-        # Aqui, a variável 'nova_senha' será usada para atualizar a senha no banco de dados
-        # Se 'nova_senha' não for definida, você terá um UnboundLocalError
         update_password(email, nova_senha)
+        app.logger.info('Password updated successfully')  # Log de sucesso
         flash('Your password has been updated.')
         return redirect(url_for('login'))
     elif token:
-        # Se o método não for POST, 'nova_senha' não será definida, então você não deve tentar usá-la aqui
-        try:
-            email = serializer.loads(token, salt='email-reset', max_age=3600)
-        except (SignatureExpired, BadSignature):
-            flash('The password reset link is expired or invalid.')
-            return redirect(url_for('esqueci_minha_senha'))
         return render_template('redefinir_senha.html', token=token)
     else:
         flash('No reset token provided.')
         return redirect(url_for('home'))
+
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -228,28 +249,40 @@ def generate_pdf(content, file):
     story = []
 
     styles = getSampleStyleSheet()
-    normal_style = styles['Normal']
+    custom_style = ParagraphStyle(
+        'CustomStyle',
+        parent=styles['Normal'],
+        fontName='Helvetica',
+        fontSize=12,
+        leading=20,
+        spaceAfter=10,
+        alignment=TA_JUSTIFY,
+        leftIndent=20
+)
 
     image = Image(BytesIO(file.read()), width=400, height=200)
     story.append(image)
 
     story.append(Spacer(1, 12))
-    story.append(Paragraph("Análise Quiromântica Detalhada:", normal_style))
+    story.append(Paragraph("Análise Quiromântica Detalhada:", custom_style))
     story.append(Spacer(1, 12))
-    analysis_paragraph = Paragraph(content, normal_style)
+    analysis_paragraph = Paragraph(content, custom_style)
     story.append(analysis_paragraph)
 
     doc.build(story)
 
     return pdf_path
 
-def send_email(pdf_path, recipient):
+def send_email(pdf_path, recipient, additional_pdf_path):
     if recipient:
         msg = Message('Sua Análise de Quiromancia', sender=app.config['MAIL_USERNAME'], recipients=[recipient])
-        msg.body = 'Encontre em anexo a análise de sua quiromancia.'
+        msg.body = 'Encontre em anexo a análise de sua quiromancia e informações adicionais.'
         with app.open_resource(pdf_path) as fp:
-            msg.attach(pdf_path, 'application/pdf', fp.read())
+            msg.attach("analise_quiromancia.pdf", 'application/pdf', fp.read())
+        with app.open_resource(additional_pdf_path) as fp:
+            msg.attach("informacoes_adicionais.pdf", 'application/pdf', fp.read())
         mail.send(msg)
+
 
 def send_reset_email(email, reset_url):
     msg = Message('Redefinir Senha', 
@@ -257,8 +290,6 @@ def send_reset_email(email, reset_url):
                   recipients=[email])
     msg.body = f'Para redefinir sua senha, clique no link a seguir: {reset_url}'
     mail.send(msg)
-
-
 
 if __name__ == '__main__':
     create_users_table()
