@@ -15,12 +15,7 @@
     <style>
       body {
         font-family: "Merienda One", cursive; /* Fonte com estilo temático */
-        background: linear-gradient(
-          135deg,
-          #3a1c71,
-          #d76d77,
-          #ffaf7b
-        ); /* Gradiente similar à home */
+        background: white; /* Gradiente similar à home */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -29,12 +24,7 @@
       }
 
       .container {
-        background-color: rgba(
-          25,
-          42,
-          86,
-          0.9
-        ); /* Fundo semitransparente para legibilidade */
+        background-color: white; /* Fundo semitransparente para legibilidade */
         border-radius: 10px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Sombra para efeito de profundidade */
         padding: 40px;
@@ -46,16 +36,16 @@
       label,
       .btn,
       p {
-        color: #fff; /* Mantendo a cor branca para o texto */
+        color: orange; /* Mantendo a cor branca para o texto */
       }
 
       input {
-        color: #000;
+        color: black;
         border-radius: 5px; /* Bordas arredondadas */
         padding: 10px; /* Preenchimento maior */
         margin-bottom: 15px; /* Espaçamento entre campos */
         width: calc(100% - 20px); /* Largura completa com padding */
-        border: 1px solid #fff; /* Borda para destaque */
+        border: 1px solid black; /* Borda para destaque */
       }
 
       .btn {
@@ -75,28 +65,29 @@
       }
 
       h1 {
-        color: #ffd700; /* Dourado para um destaque místico */
+        color: orange; /* Dourado para um destaque místico */
         margin-bottom: 30px; /* Espaçamento maior */
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
 
       .voltar-link {
         text-decoration: none;
-        color: #1dd1a1;
+        color: black;
         transition: color 0.3s ease;
       }
 
-      .enviar-link:hover,
       .voltar-link:hover {
-        color: #ffffff; /* Cor branca no hover para destacar */
+        color: orange; /* Cor branca no hover para destacar */
       }
 
       .enviar-link {
-        color: #0056b3;
+        background-color: orange;
+        transition: color 0.3s ease;
+        cursor: pointer;
       }
 
       .enviar-link:hover {
-        background-color: #0056b3;
+        transform: scale(1.05); /* Efeito de crescimento ao passar o mouse */
+        color: white;
       }
 
       .voltar-link {

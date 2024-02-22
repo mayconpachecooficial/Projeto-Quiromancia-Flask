@@ -15,7 +15,7 @@
     <style>
       body {
         font-family: "Merienda One", cursive;
-        background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+        background: white;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -24,7 +24,7 @@
       }
 
       .container {
-        background-color: rgba(25, 42, 86, 0.9);
+        background-color: white;
         border-radius: 10px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         padding: 40px;
@@ -36,7 +36,7 @@
       label,
       .btn,
       p {
-        color: #fff;
+        color: orange;
       }
 
       input {
@@ -45,7 +45,7 @@
         padding: 10px;
         margin-bottom: 15px;
         width: calc(100% - 20px);
-        border: 1px solid #fff;
+        border: 1px solid;
       }
 
       .btn {
@@ -65,9 +65,8 @@
       }
 
       h1 {
-        color: #ffd700;
+        color: orange;
         margin-bottom: 30px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
 
       .redefinir-link {
@@ -77,15 +76,13 @@
       }
 
       .redefinir-link:hover {
-        color: #ffffff;
+        transform: scale(1.05); /* Efeito de crescimento ao passar o mouse */
       }
 
       .redefinir-link {
-        color: #0056b3;
-      }
-
-      .redefinir-link:hover {
-        background-color: #0056b3;
+        background-color: orange;
+        color: white;
+        cursor: pointer;
       }
 
       @media (max-width: 768px) {
@@ -122,39 +119,6 @@
         <input type="submit" class="redefinir-link" value="Redefinir Senha" />
       </form>
     </div>
-    <script>
-      function createFallingStar() {
-        const star = document.createElement("div");
-        star.style.position = "absolute";
-        star.style.width = "2px";
-        star.style.height = "2px";
-        star.style.backgroundColor = "white";
-        star.style.borderRadius = "50%";
-        star.style.top = `${Math.random() * window.innerHeight}px`;
-        star.style.left = `${Math.random() * window.innerWidth}px`;
-        star.style.animation = "fall 2s linear forwards, twinkle 1.5s infinite";
-
-        document.body.appendChild(star);
-
-        setTimeout(() => {
-          document.body.removeChild(star);
-        }, 2000);
-      }
-
-      setInterval(createFallingStar, 300);
-
-      const styleSheet = document.createElement("style");
-      styleSheet.type = "text/css";
-      styleSheet.innerText = `
-                        @keyframes fall {
-                            to { transform: translateY(${window.innerHeight}px); }
-                        }
-                        @keyframes twinkle {
-                            0%, 100% { opacity: 1; }
-                            50% { opacity: 0.5; }
-                        }
-                    `;
-      document.head.appendChild(styleSheet);
-    </script>
+    <script></script>
   </body>
 </html>

@@ -15,12 +15,12 @@
     <style>
       body {
         font-family: "Merienda One", cursive; /* Fonte com estilo temático */
-        background: linear-gradient(
-          135deg,
-          #3a1c71,
-          #d76d77,
-          #ffaf7b
-        ); /* Gradiente similar à home */
+        background:         margin: 0;
+        padding: 0;
+        background: #fff; /* Fundo branco */
+        color: #ff8c00; /* Fonte laranja */
+        font-family: 'Merienda One', cursive;
+        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -29,12 +29,7 @@
       }
 
       .container {
-        background-color: rgba(
-          25,
-          42,
-          86,
-          0.9
-        ); /* Fundo semitransparente para legibilidade */
+        background-color: white; /* Fundo semitransparente para legibilidade */
         border-radius: 10px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Sombra para efeito de profundidade */
         padding: 40px;
@@ -43,23 +38,26 @@
         animation-duration: 0.5s;
       }
 
-      label,
-      .btn,
-      p {
-        color: #fff; /* Mantendo a cor branca para o texto */
+
+      .btn {
+        color: ; /* Mantendo a cor branca para o texto */
+      }
+
+      .label {
+        color: white;
       }
 
       input {
-        color: #000;
+        color: black;
         border-radius: 5px; /* Bordas arredondadas */
         padding: 10px; /* Preenchimento maior */
         margin-bottom: 15px; /* Espaçamento entre campos */
         width: calc(100% - 20px); /* Largura completa com padding */
-        border: 1px solid #fff; /* Borda para destaque */
+        border: 1px solid black; /* Borda para destaque */
       }
 
       .btn {
-        background-color: #22a6b3;
+        background-color: orange;
         border: none;
         border-radius: 5px;
         padding: 12px 25px; /* Mais preenchimento para botões maiores /
@@ -68,43 +66,39 @@
             width: 100%; / Botão ocupa a largura total /
             font-size: 18px; / Tamanho maior de fonte para o botão /
             margin-top: 10px; / Espaçamento antes do botão */
+        cursor: pointer;
       }
       .btn:hover {
-        background-color: #3dc1d3;
         transform: scale(1.05); /* Efeito de crescimento ao passar o mouse */
       }
 
       h1 {
-        color: #ffd700; /* Dourado para um destaque místico */
+        color: orange;
         margin-bottom: 30px; /* Espaçamento maior */
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+       ;
       }
 
       .signup-link,
       .voltar-link,
-      signup-link-1 {
+      .esqueci {
         text-decoration: none;
-        color: #1dd1a1;
+        color: black;
         transition: color 0.3s ease;
       }
 
       .signup-link:hover,
-      .voltar-link:hover {
-        color: #ffffff; /* Cor branca no hover para destacar */
+      .voltar-link:hover,
+      .esqueci:hover {
+        color: orange; /* Cor laranja no hover para destacar */
       }
 
-      .signup-link-1 {
-        color: #1dd1a1;
-      }
-
-      .signup-link-1: hover {
-        color: #ffffff;
-      }
 
       .voltar-link {
         display: block; /* Torna o link um bloco para alinhamento próprio */
         margin-top: 20px; /* Espaçamento depois do link de cadastro */
       }
+
+
 
       /* Adicionando responsividade para telas menores */
       @media (max-width: 768px) {
@@ -133,9 +127,7 @@
         <label for="password">Senha:</label><br />
         <input type="password" id="password" name="password" required /><br />
         <input type="submit" class="btn" value="Entrar" />
-        <a href="/esqueci-minha-senha" class="signup-link-1"
-          >Esqueci Minha Senha</a
-        >
+        <a href="/esqueci-minha-senha" class="esqueci">Esqueci Minha Senha</a>
       </form>
       <p class="animate__animated animate__fadeInUp">
         Ainda não tem uma conta?

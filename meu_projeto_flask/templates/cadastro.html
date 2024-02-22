@@ -15,32 +15,22 @@
     <style>
       body {
         font-family: "Merienda One", cursive;
-        background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+        background: white;
         display: flex;
         justify-content: center;
-        align-items: center;
-        height: 100vh;
         margin: 0;
       }
 
       .container {
-        background-color: rgba(255, 255, 255, 0.85);
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-        padding: 200px;
-        height: 600px;
-        width: 50%;
-        text-align: center;
-        animation-duration: 0.5s;
       }
 
       input,
       .btn {
         font-family: "Arial", sans-serif;
-        border: 2px solid #007bff;
+        border: 1px solid black;
         border-radius: 5px;
-        padding: 10px;
-        margin: 10px 0;
+        padding: 8px;
+        margin: 0;
         width: calc(100% - 20px);
         box-sizing: border-box;
         transition: all 0.3s ease;
@@ -54,25 +44,29 @@
       }
 
       .btn {
-        background-color: #007bff;
+        background-color: orange;
         color: #fff;
         cursor: pointer;
       }
 
       .btn:hover {
-        background-color: #0056b3;
+        background-color: ;
+        transform: scale(1.05); /* Efeito de crescimento ao passar o mouse */
       }
 
       h1,
       label,
-      p,
-      a {
-        color: #0a192f;
+      p {
+        color: orange;
         transition: color 0.3s ease;
       }
 
+      a {
+        color: black;
+      }
+
       a:hover {
-        color: #007bff;
+        color: orange;
       }
 
       @media (max-width: 768px) {
@@ -129,10 +123,10 @@
         Cadastro efetuado com sucesso!
       </p>
       <p class="animate__animated animate__fadeInUp">
-        Já tem uma conta? <a href="/login">Faça login aqui</a>.
+        Já tem uma conta? <a href="/login">Faça login aqui</a>
       </p>
       <p class="animate__animated animate__fadeInUp">
-        <a href="/home">Voltar ao Início!</a>.
+        <a href="/home">Voltar ao Início!</a>
       </p>
     </div>
 
